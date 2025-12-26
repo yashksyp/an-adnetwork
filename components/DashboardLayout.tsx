@@ -20,7 +20,13 @@ import {
   Globe,
   Codesandbox,
   DollarSign,
-  CreditCard
+  CreditCard,
+  Mail,
+  Calendar,
+  MessageSquare,
+  Smartphone,
+  Info,
+  Crown
 } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -32,34 +38,28 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   const isPublisher = user?.role === 'publisher';
 
-  // Define navigation based on role
-  const advertiserItems = [
+  const commonItems = [
     { name: 'Overview', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
     { name: 'Campaigns', path: '/dashboard/campaigns', icon: <Layers size={20} /> },
-    { name: 'Statistics', path: '/dashboard/stats', icon: <BarChart3 size={20} /> },
-    { name: 'Billing', path: '/dashboard/billing', icon: <Wallet size={20} /> },
-    { name: 'Tracking', path: '/dashboard/tracking', icon: <Target size={20} /> },
+    { name: 'Traffic Chart', path: '/dashboard/stats', icon: <BarChart3 size={20} /> },
+    { name: 'Wallet', path: '/dashboard/billing', icon: <Wallet size={20} /> },
+    { name: 'Inbox', path: '/dashboard/inbox', icon: <Mail size={20} /> },
   ];
-
-  const publisherItems = [
-    { name: 'Overview', path: '/dashboard', icon: <LayoutDashboard size={20} /> },
-    { name: 'Websites', path: '/dashboard/websites', icon: <Globe size={20} /> },
-    { name: 'Ad Units', path: '/dashboard/ad-units', icon: <Codesandbox size={20} /> },
-    { name: 'Statistics', path: '/dashboard/stats', icon: <BarChart3 size={20} /> },
-    { name: 'Earnings', path: '/dashboard/earnings', icon: <DollarSign size={20} /> },
-    { name: 'Withdraw', path: '/dashboard/withdraw', icon: <CreditCard size={20} /> },
-  ];
-
-  const menuItems = isPublisher ? publisherItems : advertiserItems;
 
   const secondaryItems = [
-    { name: 'Settings', path: '/dashboard/settings', icon: <Settings size={20} /> },
-    { name: 'Policies', path: '/dashboard/policies', icon: <ShieldCheck size={20} /> },
+    { name: 'Profile', path: '/dashboard/settings', icon: <Settings size={20} /> },
+    { name: 'Statistics', path: '/dashboard/stats', icon: <BarChart3 size={20} /> },
     { name: 'Support', path: '/dashboard/support', icon: <HelpCircle size={20} /> },
+    { name: 'Help & Guide', path: '/dashboard/help', icon: <Info size={20} /> },
+  ];
+
+  const actionItems = [
+    { name: 'Schedule Meeting', path: '/dashboard/schedule', icon: <Calendar size={20} />, color: 'text-blue-400' },
+    { name: 'Become Publisher', path: '/publishers', icon: <Zap size={20} />, color: 'text-emerald-400' },
   ];
 
   return (
-    <div className="flex h-screen bg-[#050505] text-white overflow-hidden">
+    <div className="flex h-screen bg-[#050505] text-white overflow-hidden font-['Inter']">
       {/* Sidebar */}
       <motion.aside 
         initial={false}
@@ -80,116 +80,113 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
               <Zap className="text-white w-5 h-5 fill-current" />
             </div>
           )}
-          <button 
-            onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-gray-500"
-          >
+          <button onClick={() => setIsCollapsed(!isCollapsed)} className="hidden lg:flex p-1.5 rounded-lg hover:bg-white/5 text-gray-500">
             <ChevronLeft className={`transition-transform duration-300 ${isCollapsed ? 'rotate-180' : ''}`} size={18} />
           </button>
         </div>
 
-        <nav className="flex-grow px-4 py-4 space-y-2 overflow-y-auto custom-scrollbar">
-          {menuItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group relative ${
-                  isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-500 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span className={`${isActive ? 'text-white' : 'group-hover:text-blue-500 transition-colors'}`}>
-                  {item.icon}
-                </span>
-                {!isCollapsed && <span className="font-bold text-sm">{item.name}</span>}
-                {isCollapsed && (
-                  <div className="absolute left-full ml-4 px-3 py-1 bg-white text-black text-xs font-bold rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity">
-                    {item.name}
-                  </div>
-                )}
-              </Link>
-            );
-          })}
+        <nav className="flex-grow px-4 py-4 space-y-1 overflow-y-auto custom-scrollbar">
+          {commonItems.map((item) => (
+            <Link key={item.path} to={item.path} className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${location.pathname === item.path ? 'bg-blue-600 text-white shadow-lg' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}>
+              {item.icon} {!isCollapsed && <span className="font-bold text-xs uppercase tracking-widest">{item.name}</span>}
+            </Link>
+          ))}
           
-          <div className="my-6 h-px bg-white/5 mx-4" />
+          <div className="my-4 h-px bg-white/5 mx-4" />
           
-          {secondaryItems.map((item) => {
-            const isActive = location.pathname === item.path;
-            return (
-              <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 group relative ${
-                  isActive ? 'bg-blue-600 text-white shadow-lg shadow-blue-600/20' : 'text-gray-500 hover:text-white hover:bg-white/5'
-                }`}
-              >
-                <span className={`${isActive ? 'text-white' : 'group-hover:text-blue-500 transition-colors'}`}>
-                  {item.icon}
-                </span>
-                {!isCollapsed && <span className="font-bold text-sm">{item.name}</span>}
-              </Link>
-            );
-          })}
+          {secondaryItems.map((item) => (
+            <Link key={item.path} to={item.path} className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all duration-200 ${location.pathname === item.path ? 'bg-blue-600 text-white' : 'text-gray-500 hover:text-white hover:bg-white/5'}`}>
+              {item.icon} {!isCollapsed && <span className="font-bold text-xs uppercase tracking-widest">{item.name}</span>}
+            </Link>
+          ))}
+
+          <div className="my-4 h-px bg-white/5 mx-4" />
+
+          {actionItems.map((item) => (
+            <Link key={item.path} to={item.path} className={`flex items-center gap-4 px-4 py-3 rounded-xl bg-blue-600/5 border border-white/5 hover:border-blue-500/30 transition-all`}>
+              <span className={item.color}>{item.icon}</span> {!isCollapsed && <span className={`font-bold text-xs uppercase tracking-widest ${item.color}`}>{item.name}</span>}
+            </Link>
+          ))}
+
+          {!isCollapsed && (
+            <button className="mt-8 flex items-center gap-4 px-4 py-4 w-full rounded-xl bg-gradient-to-r from-blue-600/10 to-transparent border border-blue-500/10 hover:border-blue-500/40 transition-all text-left group">
+               <Smartphone size={20} className="text-blue-500" />
+               <div>
+                  <p className="text-[10px] font-black text-white uppercase leading-none">Download App</p>
+                  <p className="text-[8px] text-gray-500 uppercase mt-1">iOS & Android</p>
+               </div>
+            </button>
+          )}
         </nav>
 
         <div className="p-4 border-t border-white/5">
-          <button 
-            onClick={() => { logout(); navigate('/'); }}
-            className="flex items-center gap-4 px-4 py-3 w-full rounded-xl text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all group"
-          >
-            <LogOut size={20} />
-            {!isCollapsed && <span className="font-bold text-sm">Logout</span>}
+          <button onClick={() => { logout(); navigate('/'); }} className="flex items-center gap-4 px-4 py-3 w-full rounded-xl text-gray-500 hover:text-red-500 hover:bg-red-500/10 transition-all">
+            <LogOut size={20} /> {!isCollapsed && <span className="font-bold text-xs uppercase tracking-widest">Logout</span>}
           </button>
         </div>
       </motion.aside>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header */}
-        <header className="h-20 bg-[#050505]/50 backdrop-blur-md border-b border-white/5 flex items-center justify-between px-8 shrink-0">
-          <div className="flex items-center gap-4">
-            <button className="lg:hidden p-2 text-gray-400">
-              <Menu size={24} />
-            </button>
-            <div className="hidden md:flex items-center gap-2 bg-white/5 border border-white/10 px-4 py-2 rounded-2xl">
-              <Wallet size={16} className="text-blue-500" />
-              <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{isPublisher ? 'Balance' : 'Funds'}:</span>
-              <span className="text-sm font-black">${isPublisher ? '2,840.12' : '1,245.80'}</span>
-              <Link to={isPublisher ? "/dashboard/withdraw" : "/dashboard/billing"} className="ml-2 p-1 bg-blue-600 rounded-lg hover:bg-blue-500 transition-colors">
-                <Plus size={14} />
-              </Link>
+        {/* Superior Header with Manager Info */}
+        <header className="h-20 bg-[#0a0a0a] border-b border-white/5 flex items-center justify-between px-8 shrink-0 relative z-40">
+          <div className="flex items-center gap-8">
+            <button className="lg:hidden p-2 text-gray-400"><Menu size={24} /></button>
+            
+            <div className="hidden xl:flex items-center gap-4 pr-8 border-r border-white/5">
+               <div className="flex items-center gap-2">
+                  <Crown size={16} className="text-yellow-500" />
+                  <span className="text-[10px] font-black text-yellow-500 uppercase tracking-[0.2em]">Premium Access</span>
+               </div>
+               <p className="text-[10px] font-bold text-gray-500">Want a <span className="text-blue-400 underline cursor-pointer">Dedicated Ad Manager?</span> Reach out to support!</p>
             </div>
-            {isPublisher && (
-              <div className="hidden lg:flex items-center gap-2 bg-purple-500/5 border border-purple-500/10 px-4 py-2 rounded-2xl">
-                <span className="text-xs font-bold text-purple-500 uppercase tracking-widest">Pending:</span>
-                <span className="text-sm font-black text-purple-300">$120.45</span>
-              </div>
-            )}
+
+            <div className="hidden md:flex items-center gap-6">
+               <div className="flex items-center gap-3">
+                  <div className="p-2 bg-yellow-500/10 text-yellow-500 rounded-lg"><Info size={16} /></div>
+                  <div>
+                    <p className="text-[10px] font-black text-gray-500 uppercase leading-none">Balance</p>
+                    <p className="text-lg font-black text-white">$1,245.80</p>
+                  </div>
+               </div>
+               <button onClick={() => navigate('/dashboard/billing')} className="px-5 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all shadow-lg shadow-blue-600/20">Add Fund</button>
+            </div>
           </div>
 
-          <div className="flex items-center gap-6">
-            <button className="relative p-2 text-gray-400 hover:text-white transition-colors">
-              <Bell size={20} />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-blue-600 rounded-full border-2 border-[#050505]"></span>
-            </button>
-            <div className="flex items-center gap-3 pl-6 border-l border-white/5">
+          <div className="flex items-center gap-4">
+            <button className="px-5 py-2 bg-white/5 border border-white/10 rounded-xl text-[10px] font-black uppercase hover:bg-white/10 transition-all">Feedback</button>
+            <div className="px-4 py-2 bg-blue-600/5 border border-blue-500/10 rounded-xl text-[10px] font-bold text-blue-400 uppercase">Support PIN: 520810</div>
+            
+            <div className="h-8 w-px bg-white/5 mx-2" />
+            
+            <button className="relative p-2 text-gray-400 hover:text-white"><Bell size={20} /></button>
+            
+            <div className="flex items-center gap-3 pl-4">
               <div className="text-right hidden sm:block">
-                <p className="text-xs font-bold text-white leading-none">{user?.name}</p>
-                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tighter mt-1">{user?.role}</p>
+                <p className="text-xs font-black text-white leading-none">{user?.name}</p>
+                <p className="text-[10px] text-blue-500 font-black uppercase mt-1">{user?.role}</p>
               </div>
-              <div className={`w-10 h-10 ${isPublisher ? 'bg-purple-600 shadow-purple-600/20' : 'bg-blue-600 shadow-blue-600/20'} rounded-2xl flex items-center justify-center font-black text-sm shadow-lg`}>
+              <div className="w-10 h-10 bg-blue-600 rounded-2xl flex items-center justify-center font-black text-sm shadow-lg shadow-blue-600/20">
                 {user?.name?.charAt(0)}
               </div>
             </div>
           </div>
         </header>
 
-        {/* Dynamic Content */}
         <main className="flex-1 overflow-y-auto bg-[#050505] custom-scrollbar">
           <div className="p-8 max-w-[1600px] mx-auto">
             {children}
           </div>
+          <footer className="p-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold text-gray-600 uppercase tracking-widest">
+            <p>© 2025 PixelVisionAds - All Rights Reserved.</p>
+            <div className="flex gap-6 mt-4 md:mt-0">
+               <Link to="/faq" className="hover:text-white transition-colors">FAQ</Link>
+               <Link to="/about" className="hover:text-white transition-colors">About</Link>
+               <Link to="/contact" className="hover:text-white transition-colors">Contact Us</Link>
+               <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+               <Link to="/terms" className="hover:text-white transition-colors">Terms & Conditions</Link>
+            </div>
+          </footer>
         </main>
       </div>
     </div>
